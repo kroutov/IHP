@@ -10,9 +10,9 @@ Intelligent Honeypot Project
 
 **IHP** architecture is modulable: the server load a **client** module (~= proxy), which handle the incoming connections and load necessary modules (**firewall** and **IDS** for instance).
 
-### Compilation and installation ###
+## Compilation and installation ##
 
-## libKNM ##
+### libKNM ###
 This project use the [libKNM](https://github.com/jpclipffel/libKNM).
 A copy of this library is provided at `sources/libKNM/libKNM.so.1.0.0`. 
 Headers files are provided in the directory `sources/libKNM/includes`.
@@ -22,14 +22,13 @@ want to include `KError.hh`, do:
     #include <KError.hh>
 
 
-## IHP server ##
+### IHP server ###
 To compile the server, please use the provided Makefile as following:
 
     $> make
 
 
-## IHP modules ##
-
+### IHP modules ###
 You have to compile each module by yourlsef. All modules should have
 a makefile in their own directory. Perform the following operations to
 compile and install the needed modules:
