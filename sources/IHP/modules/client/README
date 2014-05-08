@@ -1,0 +1,6 @@
+To compile and install the module, do the following:
+$> make
+$> make install
+
+Optionnaly, you can 'clean' the directory:
+$> make fclean
