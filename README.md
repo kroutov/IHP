@@ -1,4 +1,0 @@
-IHP
-===
-
-Intelligent Honeypot project
