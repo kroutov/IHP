@@ -19,7 +19,7 @@ NAME 			= 		firewall.so
 SRC				=		Firewall.cpp
 CC				=		g++
 CFLAGS			=		-W -Wall -pthread
-INCLUDES 		=		../../../libKNM/includes
+INCLUDES 		=		../../libKNM/includes
 
 .PHONY: 	all install fclean clean re
 
@@ -40,4 +40,4 @@ clean:
 re:			fclean all
 
 install:
-			mv $(NAME) ../../../../
+			mv $(NAME) ../../../

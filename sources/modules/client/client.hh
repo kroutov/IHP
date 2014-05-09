@@ -26,7 +26,7 @@
 #include <KThread.hpp>
 #include <KMutex.hh>
 #include <KModule.hpp>
-#include "../../iClient.hpp"
+#include "../../server/iClient.hpp"
 
 using namespace std;
 using namespace KNM;

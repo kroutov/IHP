@@ -20,7 +20,7 @@
 #ifndef				_FIREWALL_HH_
 # define			_FIREWALL_HH_
 
-#include			"../../iFirewall.hpp"
+#include			"../../server/iFirewall.hpp"
 
 using namespace std;
 

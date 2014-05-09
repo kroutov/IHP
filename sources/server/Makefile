@@ -4,19 +4,17 @@
 # Creation date : 27/04/2014
 # Last update   : 29/04/2014
 
-NAME			=		ihp.bin
+NAME			=		ihp-server.bin
 
-SRC_DIR 		=		./sources
-
-SRC 			=		$(SRC_DIR)/IHP/main.cpp				\
-						$(SRC_DIR)/IHP/server.cpp
+SRC 			=		main.cpp				\
+						server.cpp
 
 CC				=		g++
 CFLAGS			=		-W -Wall -pthread
-CLIBS			=		-L . $(SRC_DIR)/libKNM/libKNM.so.1.0.0
-INCLUDES 		=		$(SRC_DIR)/libKNM/includes
+CLIBS			=		-L . ../libKNM/libKNM.so.1.0.0
+INCLUDES 		=		../libKNM/includes
 
-.PHONY: 	all clean flcean re
+.PHONY: 	all clean flcean re install
 
 all:		$(NAME)
 
@@ -29,3 +27,6 @@ fclean:		clean
 			rm -f $(NAME)
 
 re:			fclean all
+
+install:
+			if [ -e $(NAME) ]; then mv $(NAME) ../../; fi
