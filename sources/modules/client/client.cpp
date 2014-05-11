@@ -29,25 +29,26 @@ client::~client()
 	
 }
 
-void 	client::configure(KSocket *_sock, signed int _oport, KLog *_log,
-						  iFirewall *_firewall, KModule<iIDS> &KMIDS)
+void 	client::configure(KSocket *_sock, int _oport, KLog *_log, KConfig *_config)
 {
-	isock = _sock;
-	oport = _oport;
+	// Configuration
+	isock  = _sock;
+	oport  = _oport;
+	log    = _log;
+	config = _config;
 	osock.setPort(oport);
-	log   = _log;
 
-	firewall = _firewall;
-	if (!firewall)
-		log->write(WARNING, "NULL firewall instance provided");
+	// Retreive client 'name'
+	name.assign(isock->getSaddr()->getAddress());
+	name += ":";
+	name += static_cast<ostringstream*>( &(ostringstream() << isock->getSaddr()->getPort()) )->str();
 
-	try
+	// Try to load the IDS module
+	if (config)
 	{
-		IDS      = KMIDS.create();
-	}
-	catch (KError *error)
-	{
-		log->write(WARNING, "Unable to create an IDS instance");
+		modIDS.setModule(config->getOption("MODIDS", "./IDS.so"));
+		modIDS.setBuilder("build");
+		modIDS.setDestroyer("destroy");
 	}
 }
 
@@ -56,50 +57,39 @@ void 				*client::tmain(__attribute__((unused)) void *args)
 	char 			buffer[16];
 	int 			ret;
 
-	name.assign(isock->getSaddr()->getAddress());
-	name += ":";
-	name += static_cast<ostringstream*>( &(ostringstream() << isock->getSaddr()->getPort()) )->str();
-
-	if (firewall)
-	{
-		if (firewall->check(isock->getSaddr()->getAddress()) == true)
-		{
-			if (log) {log->write(WARNING, name + ": IP is blacklisted");}
-			cout << "Firewall detection: blocked" << endl;
-			osock.disconnect();
-			isock->disconnect();
-			return(NULL);
-		}
-	}
-	else
-		if (log) {log->write(INFO, name + ": No firewall instance available");}
-			
-
+	// Connect to the service
 	try
 	{
 		osock.connect();
 		spot.add(&osock, KSocket::pool::READ);
 		spot.add(isock, KSocket::pool::READ);
-
 		if (log) {log->write(name + ": connected");}
-		while (true)
+	}
+	catch (KError *error)
+	{
+		if (log) {log->write(ERROR, name + ": " + error->what());}
+		osock.disconnect();
+		isock->disconnect();
+		return NULL;
+	}
+
+	// Proxy loop
+	while (true)
+	{ 
+		try
 		{
 			spot.select();
-
 			if (spot.isset(isock, KSocket::pool::READ))
 			{
-				memset(buffer, 0, 16);
-
 				while (isock->isReadable())
 				{
-					//cout << "-- Socket is readable --" << endl;
+					memset(buffer, 0, 16);
 					ret = isock->receive(buffer, 15);
-					//cout << " read  : " << ret << endl;
-					ret = osock.send(buffer, ret);
-					//cout << " write : " << ret << endl;
+					packet.append(buffer, ret);
 				}
+				osock.send(packet);
+				packet.clear();
 			}
-
 			if (spot.isset(&osock, KSocket::pool::READ))
 			{
 				memset(buffer, 0, 16);
@@ -107,14 +97,14 @@ void 				*client::tmain(__attribute__((unused)) void *args)
 				ret = isock->send(buffer, ret);
 			}
 		}
+		catch(KError *error)
+		{
+			if (log) {log->write(ERROR, name + ": " + error->what());}
+			if (log) {log->write(name + ": disconnection");}
+			osock.disconnect();
+			isock->disconnect();
+			break;
+		}
 	}
-	catch(KError *error)
-	{
-		if (log) {log->write(ERROR, name + ": " + error->what());}
-	}
-
-	if (log) {log->write(name + ": disconnection");}
-	osock.disconnect();
-	isock->disconnect();
 	return(NULL);
 }

@@ -48,14 +48,14 @@ public:
 	void 	start();					/**< Start the server. */
 
 private:
-	signed int 			iport;
-	signed int 			oport;
-	KSocket 			insock;
-	KSocket 			outsock;
-	KConfig 			config;
-	string 				cfgpath;
-	KLog 				logfile;
-	KModule<iClient> 	modClient;
-	KModule<iFirewall>	modFirewall;
-	KModule<iIDS>		modIDS;
+	signed int 				iport;			/**< Input (emulated service) port. */
+	signed int 				oport;			/**< Output (service) port. */
+	KSocket 				insock;			/**< Input socket. */
+	KSocket 				outsock;		/**< Output socket. */
+	KConfig 				config;			/**< Configuration system. */
+	string 					cfgpath;		/**< Configuration file path. */
+	KLog 					logfile;		/**< Log system. */
+	KModule<iClient> 		modClient;		/**< Client module generator. */
+	KModule<iFirewall>		modFirewall;	/**< Firewall module generator. */
+	iFirewall 				*firewall;		/**< Firewall common instance. */
 };

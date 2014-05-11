@@ -17,27 +17,30 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ICLIENT_HPP
-#define ICLIENT_HPP
+#ifndef ISMODULE_HPP
+#define ISMODULE_HPP
 
+#include <string.h>
+#include <KError.hh>
 #include <KSocket.hh>
-#include <KThread.hpp>
+#include <KSocket_pool.hh>
 #include <KLog.hh>
 
 using namespace KNM;
 
 /**
- * Client interface.
- * Client act as an intelligent proxy and IDS/IPS.
+ * Security module interface.
+ * Check input packet integrity and security.
  */
-class 	iClient: public KThread<>
+class 	iSModule
 {
 public:
-	iClient(){};
-	virtual ~iClient(){};
+	iSModule(){};
+	virtual ~iSModule(){};
 
-	virtual void 	configure(KSocket *, int, KLog *, KConfig *) = 0;	/**< Configure client. */
-	virtual void 	*tmain(void *) = 0;									/**< Thread entry point. */
+	virtual void 	configure(const KConfig &, const KLog &) = 0;	/**< Configure module. */
+	virtual void 	input(const char*, size_t) = 0;					/**< Input data. */
+	virtual bool 	control() = 0;									/**< Perform security check(s). */
 };
 
 #endif

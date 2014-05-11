@@ -17,27 +17,16 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ICLIENT_HPP
-#define ICLIENT_HPP
+#include <gtkmm/main.h>
+#include <gtkmm/window.h>
+#include <gtkmm/button.h>
+#include "Pannel.hh"
 
-#include <KSocket.hh>
-#include <KThread.hpp>
-#include <KLog.hh>
-
-using namespace KNM;
-
-/**
- * Client interface.
- * Client act as an intelligent proxy and IDS/IPS.
- */
-class 	iClient: public KThread<>
+int 				main(int ac, char **av)
 {
-public:
-	iClient(){};
-	virtual ~iClient(){};
+	Gtk::Main 		app(ac, av);
+	Pannel 			pannel;
 
-	virtual void 	configure(KSocket *, int, KLog *, KConfig *) = 0;	/**< Configure client. */
-	virtual void 	*tmain(void *) = 0;									/**< Thread entry point. */
-};
-
-#endif
+	Gtk::Main::run(pannel);
+	return 0;
+}

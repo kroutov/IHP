@@ -17,27 +17,19 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ICLIENT_HPP
-#define ICLIENT_HPP
+#include "state.hh"
 
-#include <KSocket.hh>
-#include <KThread.hpp>
-#include <KLog.hh>
+using namespace tabs;
 
-using namespace KNM;
-
-/**
- * Client interface.
- * Client act as an intelligent proxy and IDS/IPS.
- */
-class 	iClient: public KThread<>
+state::state()
 {
-public:
-	iClient(){};
-	virtual ~iClient(){};
+	resize(3, 3);
 
-	virtual void 	configure(KSocket *, int, KLog *, KConfig *) = 0;	/**< Configure client. */
-	virtual void 	*tmain(void *) = 0;									/**< Thread entry point. */
-};
+	start.set_label("Start");
+	start.set_can_focus(false);
+	attach(start, 1, 2, 1, 2, Gtk::SHRINK, Gtk::FILL);
 
-#endif
+	stop.set_label("Stop");
+	stop.set_can_focus(false);
+	//attach(stop, 1, 2, 2, 3);
+}

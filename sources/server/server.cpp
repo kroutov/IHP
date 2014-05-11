@@ -35,7 +35,7 @@ server::server(signed int _iport, signed int _oport)
 server::~server()
 {
 	logfile.write("Shutting down server");
-	insock.disconnect();
+	//insock.disconnect(); !!! BUG IN LIBKNM !!!
 }
 
 void 	server::setConf(const string &_path)
@@ -72,30 +72,7 @@ void 	server::configure(int ac, char **av)
 	modFirewall.setBuilder("build");
 	modFirewall.setDestroyer("destroy");
 
-	// Configuring modIDS
-	modIDS.setModule(config.getOption("MODIDS", "./ids.so"));
-	modIDS.setBuilder("build");
-	modIDS.setDestroyer("destroy");
-
-	// Everything is OK
-	logfile.write("Configuration loaded");
-}
-
-void 	server::start()
-{
-	KSocket 	*csock;
-	iClient 	*client;
-	iFirewall 	*firewall;
-
-	signal(SIGPIPE, SIG_IGN);
-	signal(SIGINT, (sighandler_t)&server_exit);
-
-	insock.setPort(iport);
-	insock.bind();
-	insock.listen();
-	logfile.write("Input port now connected");
-
-	// Creating a new IDS instance
+	// Build firewall instance
 	try
 	{
 		firewall = modFirewall.create();
@@ -108,30 +85,60 @@ void 	server::start()
 		logfile.write(ERROR, error->what());
 	}
 
+	// Everything is OK
+	logfile.write("Configuration loaded");
+}
+
+void 				server::start()
+{
+	KSocket 		*csock;
+	iClient 		*client;
+
+	// Control interuption signal
+	signal(SIGPIPE, SIG_IGN);
+	signal(SIGINT, (sighandler_t)&server_exit);
+
+	// Start server network access
+	insock.setPort(iport);
+	insock.bind();
+	insock.listen();
+	logfile.write("Input port now connected");
+
 	while (1)
 	{
 		try
 		{
+			// Accept & create a new client
 			csock = insock.accept();
 			logfile.write("New client connected");
 
-			try
+			// Check firewall database
+			if (firewall && firewall->check(csock->getSaddr()->getAddress()) == true)
 			{
-				// Creating and configuring a new client instance
-				client = modClient.create();
-				logfile.write("New client thread created");
-				client->configure(csock, oport, &logfile, firewall, modIDS);
-				logfile.write("New client thread configured");
-
-				// Starting the client instance
-				client->start();
-				logfile.write("New client thread started");
-			}
-			catch (KError *error)
-			{
+				logfile.write(WARNING, csock->getSaddr()->getAddress() + ": IP is blacklisted");
+				cout << "Firewall detection: blocked IP " + csock->getSaddr()->getAddress() << endl;
 				csock->disconnect();
-				error->dump();
-				logfile.write(ERROR, error->what());
+			}
+			else
+			{
+				try
+				{
+					// Create and configure a new client
+					client = modClient.create();
+					logfile.write("New client thread created");
+					client->configure(csock, oport, &logfile, &config);
+					logfile.write("New client thread configured");
+
+					// Start the client
+					client->start();
+					logfile.write("New client thread started");
+				}
+				catch (KError *error)
+				{
+					csock->disconnect();
+					error->dump();
+					logfile.write(ERROR, error->what());
+				}
 			}
 		}
 		catch (KError *error)

@@ -17,27 +17,23 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ICLIENT_HPP
-#define ICLIENT_HPP
+#ifndef TABS_STATE_HH
+#define TABS_STATE_HH
 
-#include <KSocket.hh>
-#include <KThread.hpp>
-#include <KLog.hh>
+#include <gtkmm/button.h>
+#include <gtkmm/table.h>
 
-using namespace KNM;
-
-/**
- * Client interface.
- * Client act as an intelligent proxy and IDS/IPS.
- */
-class 	iClient: public KThread<>
+namespace tabs
 {
-public:
-	iClient(){};
-	virtual ~iClient(){};
+	class 	state: public Gtk::Table
+	{
+	public:
+		state();
 
-	virtual void 	configure(KSocket *, int, KLog *, KConfig *) = 0;	/**< Configure client. */
-	virtual void 	*tmain(void *) = 0;									/**< Thread entry point. */
-};
+	private:
+		Gtk::Button 	start;
+		Gtk::Button 	stop;
+	};
+}
 
 #endif

@@ -26,6 +26,8 @@
 #include <KThread.hpp>
 #include <KMutex.hh>
 #include <KModule.hpp>
+#include <KConfig.hh>
+#include "../../server/iIDS.hpp"
 #include "../../server/iClient.hpp"
 
 using namespace std;
@@ -38,22 +40,23 @@ using namespace KNM;
 class 	client: public iClient
 {
 public:
-	client();											/**< Should be the ONLY constructor. */
-	~client();											/**< Destructor. */
+	client();														/**< Should be the ONLY constructor. */
+	~client();														/**< Destructor. */
 
-	void 	configure(KSocket *, signed int, KLog *,
-					  iFirewall *, KModule<iIDS>&);		/**< Configure client. */
-	void 	*tmain(void *args);							/**< Thread main function. */
+	void 	configure(KSocket *, int, KLog *, KConfig *);			/**< Configure client. */
+	void 	*tmain(void *args);										/**< Thread main function. */
 
 private:
-	KSocket 		*isock;								/**< Client Input socket. */
-	KSocket 		osock;								/**< Client Output socket. */
-	signed int 		oport;								/**< Client Output port. */
-	KLog 			*log;								/**< Log system instance. */
-	KSocket::pool 	spot;								/**< Socket pool for I/O operations. */
-	string 			name;								/**< Client 'name' for log readability. */
-	iIDS 			*IDS;								/**< IDS instance. */
-	iFirewall 		*firewall;							/**< Firewall instance. */
+	KSocket 		*isock;											/**< Client Input socket. */
+	KSocket 		osock;											/**< Client Output socket. */
+	signed int 		oport;											/**< Client Output port. */
+	KSocket::pool 	spot;											/**< Socket pool for I/O operations. */
+	string 			name;											/**< Client 'name' for log readability. */
+	string 			packet;											/**< A whole readed packet. */
+
+	KConfig 		*config;										/**< Configuration system instance. */
+	KLog 			*log;											/**< Log system instance. */
+	KModule<iIDS>	modIDS;	
 };
 
 /**

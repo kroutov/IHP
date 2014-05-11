@@ -7,18 +7,21 @@
 NAME			=		ihp-controller.bin
 
 SRC 			=		main.cpp				\
+						Pannel.cpp				\
+						tabs/state/state.cpp 	
 
 CC				=		g++
 CFLAGS			=		-W -Wall -pthread
 CLIBS			=		-L . ../libKNM/libKNM.so.1.0.0
 INCLUDES 		=		../libKNM/includes
+GTKMM 			=		`pkg-config gtkmm-3.0 --cflags --libs`
 
 .PHONY: 	all clean flcean re install
 
 all:		$(NAME)
 
 $(NAME):
-			$(CC) $(CFLAGS) $(CLIBS) -I $(INCLUDES) $(SRC) -o $(NAME)
+			$(CC) $(CFLAGS) $(CLIBS) -I $(INCLUDES) $(SRC) $(GTKMM) -o $(NAME)
 
 clean:	
 

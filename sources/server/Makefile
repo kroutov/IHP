@@ -11,8 +11,8 @@ SRC 			=		main.cpp				\
 
 CC				=		g++
 CFLAGS			=		-W -Wall -pthread
-CLIBS			=		-L . ../libKNM/libKNM.so.1.0.0
-INCLUDES 		=		../libKNM/includes
+CLIBS			=		-lKNM
+INCLUDES 		=		/usr/local/include/libKNM
 
 .PHONY: 	all clean flcean re install
 

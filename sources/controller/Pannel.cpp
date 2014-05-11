@@ -17,27 +17,22 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ICLIENT_HPP
-#define ICLIENT_HPP
+#include "Pannel.hh"
 
-#include <KSocket.hh>
-#include <KThread.hpp>
-#include <KLog.hh>
-
-using namespace KNM;
-
-/**
- * Client interface.
- * Client act as an intelligent proxy and IDS/IPS.
- */
-class 	iClient: public KThread<>
+Pannel::Pannel()
 {
-public:
-	iClient(){};
-	virtual ~iClient(){};
+	// Initializing pannel (which is the main window)
+	set_title(PANEL_DFLT_NAME);
+	set_default_size(500, 200);
+	set_border_width(5);
 
-	virtual void 	configure(KSocket *, int, KLog *, KConfig *) = 0;	/**< Configure client. */
-	virtual void 	*tmain(void *) = 0;									/**< Thread entry point. */
-};
+	// Initializing tabs
+	tablist.set_group_name("tablist");
+	tablist.set_can_focus(false);
+	tablist.append_page(state, "State");
+	add(tablist);
 
-#endif
+
+	// Ready
+	show_all();
+}

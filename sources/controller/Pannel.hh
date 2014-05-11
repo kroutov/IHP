@@ -17,27 +17,27 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ICLIENT_HPP
-#define ICLIENT_HPP
+#ifndef PANEL_HH
+#define PANEL_HH
 
-#include <KSocket.hh>
-#include <KThread.hpp>
-#include <KLog.hh>
+#define PANEL_DFLT_NAME	"IHP controler"
 
-using namespace KNM;
+#include <string>
+#include <gtkmm/window.h>
+#include <gtkmm/notebook.h>
+#include "tabs/state/state.hh"
 
-/**
- * Client interface.
- * Client act as an intelligent proxy and IDS/IPS.
- */
-class 	iClient: public KThread<>
+using namespace std;
+
+class 		Pannel: public Gtk::Window
 {
 public:
-	iClient(){};
-	virtual ~iClient(){};
+	Pannel();					/**< Default constructor. */
 
-	virtual void 	configure(KSocket *, int, KLog *, KConfig *) = 0;	/**< Configure client. */
-	virtual void 	*tmain(void *) = 0;									/**< Thread entry point. */
+private:
+	string 				name;			/**< Window name. */
+	Gtk::Notebook 		tablist;		/**< Tabs. */
+	tabs::state 		state;
 };
 
 #endif
