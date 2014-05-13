@@ -2,7 +2,7 @@ IHP
 ===
 Intelligent Honeypot Project
 
-**IHP** is a security research project, which try tom implement a serivce who can:
+**IHP** is a security research project, which try to implement a serivce who can:
 - Accept connections on a specific port(s): **Server core** and **client module**
 - Analyze connection status (source, destinations, ...): **Firewall module**
 - Analyze packets content and detect security issues: **IDS module**
@@ -29,7 +29,7 @@ To compile the server, please use the provided Makefile as following:
 
 
 ### IHP modules ###
-You have to compile each module by yourlsef. All modules should have
+You have to compile each module by yourself. All modules should have
 a makefile in their own directory. Perform the following operations to
 compile and install the needed modules:
 
